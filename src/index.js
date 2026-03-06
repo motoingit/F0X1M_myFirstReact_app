@@ -5,7 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 //*
-import { ToastContainer, toast,Bounce } from 'react-toastify';
+import { ToastContainer, Bounce } from 'react-toastify';
 //*
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

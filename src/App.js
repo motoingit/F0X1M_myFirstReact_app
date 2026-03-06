@@ -1,83 +1,66 @@
-
 import './App.css';
 import About from './components/About';
 import Alert from './components/Alert';
 import Navbar from './components/Navbar';
 import TextForm from './components/TextForm';
-import React, {useState} from 'react';
-
-//!
+import Contact from './components/Contact';
+import Terms from './components/Terms';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-//!
-
-
-
-let name = "Mohit";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-  let showAleart = (type,text)=>{
-    setAleart({
-      text: text,
-      type: type,
-    })
+  const [mode, setMode] = useState('light'); // Whether dark mode is enabled or not
+  const [alert, setAlert] = useState(null);
+
+  const showAlert = (message, type) => {
+    setAlert({
+      msg: message,
+      type: type
+    });
     setTimeout(() => {
-      setAleart(null);
-    }, 3000);
-  }
+      setAlert(null);
+    }, 2000);
+  };
 
-  let [colorMode, setColorMode] = useState("light");
-  let [aleart, setAleart] = useState(null);
-
- const removeBodyClasses = ()=>{
-   document.body.classList.remove("bg-dark");
-   document.body.classList.remove("bg-light");
-   document.body.classList.remove("bg-warning");
-   document.body.classList.remove("bg-danger");
-   document.body.classList.remove("bg-sucess");
-   document.body.classList.remove("bg-info");
- }
-
-  let toggleMode = (cls)=>{
-    document.body.classList.add("bg-"+cls);
-    if(colorMode === "light"){
-      setColorMode("dark");
-      showAleart("Tips","DarkMode Eable");
-      document.body.style.backgroundColor = "grey";
-      // document.title = "Text Util - Dark"
-    }else{
-      setColorMode("light");
-      showAleart("Tips","DarkMode Disable");
-      document.body.style.backgroundColor = "white";
-      // document.title = "Text Util - Lght"
+  const toggleMode = (cls) => {
+    if (cls === 'success' || cls === 'danger' || cls === 'warning' || cls === 'info') {
+      document.body.className = 'bg-' + cls;
+      setMode('dark');
+      toast.info(`Theme changed to ${cls}`, { theme: "dark" });
+    } else {
+      if (mode === 'light') {
+        setMode('dark');
+        document.body.style.backgroundColor = '#042743';
+        showAlert("Dark mode has been enabled", "success");
+        toast.success("Dark mode enabled", { theme: "dark" });
+      } else {
+        setMode('light');
+        document.body.style.backgroundColor = 'white';
+        showAlert("Light mode has been enabled", "success");
+        toast.success("Light mode enabled", { theme: "light" });
+      }
     }
   };
 
-return (
-    <Router>
-
-      <Navbar title="Text-Util" mode={colorMode} toggleMode={toggleMode} />
-
-      <Alert aleart={aleart} />
-
-      <Routes>
-
-        <Route exact path="/about" element={<About />} />
-
-        <Route 
-          exact path="/" 
-          element={
-            <TextForm
-              heading="Enter Text to Analyse"
-              mode={colorMode}
-              aleart={aleart}
-              showAleart={showAleart}
-            />
-          } 
-        />
-
-      </Routes>
-
-    </Router>
+  return (
+    <>
+      <Router>
+        <Navbar title="TextUtils" mode={mode} toggleMode={toggleMode} />
+        <Alert alert={alert} />
+        <div className="container my-3">
+          <Routes>
+            <Route exact path="/about" element={<About mode={mode} />} />
+            <Route exact path="/contact" element={<Contact mode={mode} />} />
+            <Route exact path="/terms" element={<Terms mode={mode} />} />
+            <Route exact path="/" element={
+              <TextForm showAlert={showAlert} heading="Try TextUtils - Word Counter, Character Counter, Remove extra spaces" mode={mode} />
+            } />
+          </Routes>
+        </div>
+      </Router>
+    </>
   );
 }
 
